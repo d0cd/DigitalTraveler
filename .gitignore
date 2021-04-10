@@ -1,0 +1,4 @@
+# Ignore Firebase access files
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+web/firebase-config.js
