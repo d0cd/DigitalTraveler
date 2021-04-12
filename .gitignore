@@ -9,3 +9,4 @@ web/firebase-config.js
 .packages
 .vscode
 build/*
+!build/.gitkeep
