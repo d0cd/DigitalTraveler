@@ -42,28 +42,20 @@ class EntriesViewModel {
         .map((dateJobsDuration) => dateJobsDuration.duration)
         .reduce((value, element) => value + element);
 
-    // total pay across all jobs
-    final totalPay = allDailyJobsDetails
-        .map((dateJobsDuration) => dateJobsDuration.pay)
-        .reduce((value, element) => value + element);
-
     return <EntriesListTileModel>[
       EntriesListTileModel(
         leadingText: 'All Entries',
-        middleText: Format.currency(totalPay),
         trailingText: Format.hours(totalDuration),
       ),
       for (DailyJobsDetails dailyJobsDetails in allDailyJobsDetails) ...[
         EntriesListTileModel(
           isHeader: true,
           leadingText: Format.date(dailyJobsDetails.date),
-          middleText: Format.currency(dailyJobsDetails.pay),
           trailingText: Format.hours(dailyJobsDetails.duration),
         ),
         for (JobDetails jobDuration in dailyJobsDetails.jobsDetails)
           EntriesListTileModel(
             leadingText: jobDuration.name,
-            middleText: Format.currency(jobDuration.pay),
             trailingText: Format.hours(jobDuration.durationInHours),
           ),
       ]

@@ -18,11 +18,6 @@ class TabItemData {
       title: Strings.jobs,
       icon: Icons.work,
     ),
-    TabItem.entries: TabItemData(
-      key: Keys.entriesTab,
-      title: Strings.entries,
-      icon: Icons.view_headline,
-    ),
     TabItem.account: TabItemData(
       key: Keys.accountTab,
       title: Strings.account,

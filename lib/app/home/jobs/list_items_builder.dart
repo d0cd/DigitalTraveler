@@ -19,10 +19,14 @@ class ListItemsBuilder<T> extends StatelessWidget {
       data: (items) =>
           items.isNotEmpty ? _buildList(items) : const EmptyContent(),
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, __) => const EmptyContent(
-        title: 'Something went wrong',
-        message: 'Can\'t load items right now',
-      ),
+      error: (obj, trace) {
+        print(trace != null ? trace.toString() : "No trace found.");
+        print(obj);
+        return EmptyContent(
+          title: 'Something went wrong',
+          message: 'Can\'t load items right now',
+        );
+      },
     );
   }
 

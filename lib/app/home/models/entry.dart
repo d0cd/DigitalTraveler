@@ -6,6 +6,7 @@ class Entry extends Equatable {
     required this.jobId,
     required this.start,
     required this.end,
+    required this.steps,
     required this.comment,
   });
 
@@ -13,10 +14,11 @@ class Entry extends Equatable {
   final String jobId;
   final DateTime start;
   final DateTime end;
+  final List<String> steps;
   final String comment;
 
   @override
-  List<Object> get props => [id, jobId, start, end, comment];
+  List<Object> get props => [id, jobId, start, end, steps, comment];
 
   @override
   bool get stringify => true;
@@ -35,6 +37,7 @@ class Entry extends Equatable {
       jobId: value['jobId'],
       start: DateTime.fromMillisecondsSinceEpoch(startMilliseconds),
       end: DateTime.fromMillisecondsSinceEpoch(endMilliseconds),
+      steps: value['steps'].cast<String>(),
       comment: value['comment'] ?? '',
     );
   }
@@ -44,6 +47,7 @@ class Entry extends Equatable {
       'jobId': jobId,
       'start': start.millisecondsSinceEpoch,
       'end': end.millisecondsSinceEpoch,
+      'steps': steps,
       'comment': comment,
     };
   }

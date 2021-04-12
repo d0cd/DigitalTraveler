@@ -34,7 +34,6 @@ class _EditJobPageState extends State<EditJobPage> {
     super.initState();
     if (widget.job != null) {
       _name = widget.job?.name;
-      _ratePerHour = widget.job?.ratePerHour;
     }
   }
 
@@ -66,8 +65,7 @@ class _EditJobPageState extends State<EditJobPage> {
           ));
         } else {
           final id = widget.job?.id ?? documentIdFromCurrentDate();
-          final job =
-              Job(id: id, name: _name ?? '', ratePerHour: _ratePerHour ?? 0);
+          final job = Job(id: id, name: _name ?? '');
           await database.setJob(job);
           Navigator.of(context).pop();
         }
@@ -135,16 +133,6 @@ class _EditJobPageState extends State<EditJobPage> {
         validator: (value) =>
             (value ?? '').isNotEmpty ? null : 'Name can\'t be empty',
         onSaved: (value) => _name = value,
-      ),
-      TextFormField(
-        decoration: const InputDecoration(labelText: 'Rate per hour'),
-        keyboardAppearance: Brightness.light,
-        initialValue: _ratePerHour != null ? '$_ratePerHour' : null,
-        keyboardType: const TextInputType.numberWithOptions(
-          signed: false,
-          decimal: false,
-        ),
-        onSaved: (value) => _ratePerHour = int.tryParse(value ?? '') ?? 0,
       ),
     ];
   }

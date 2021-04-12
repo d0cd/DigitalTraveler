@@ -7,3 +7,5 @@ web/firebase-config.js
 .flutter-plugins
 .flutter-plugins-dependencies
 .packages
+.vscode
+build/*

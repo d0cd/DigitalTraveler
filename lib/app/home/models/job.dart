@@ -3,13 +3,12 @@ import 'package:meta/meta.dart';
 
 @immutable
 class Job extends Equatable {
-  const Job({required this.id, required this.name, required this.ratePerHour});
+  const Job({required this.id, required this.name});
   final String id;
   final String name;
-  final int ratePerHour;
 
   @override
-  List<Object> get props => [id, name, ratePerHour];
+  List<Object> get props => [id, name];
 
   @override
   bool get stringify => true;
@@ -22,14 +21,12 @@ class Job extends Equatable {
     if (name == null) {
       throw StateError('missing name for jobId: $documentId');
     }
-    final ratePerHour = data['ratePerHour'] as int;
-    return Job(id: documentId, name: name, ratePerHour: ratePerHour);
+    return Job(id: documentId, name: name);
   }
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'ratePerHour': ratePerHour,
     };
   }
 }

@@ -37,7 +37,9 @@ class _EntryPageState extends State<EntryPage> {
   late TimeOfDay _startTime;
   late DateTime _endDate;
   late TimeOfDay _endTime;
+  late List<String> _steps;
   late String _comment;
+  late Color _color;
 
   @override
   void initState() {
@@ -50,7 +52,11 @@ class _EntryPageState extends State<EntryPage> {
     _endDate = DateTime(end.year, end.month, end.day);
     _endTime = TimeOfDay.fromDateTime(end);
 
+    _steps = widget.entry?.steps ?? ["${start.toString()},RED"];
+
     _comment = widget.entry?.comment ?? '';
+
+    _color = Colors.red;
   }
 
   Entry _entryFromState() {
@@ -64,12 +70,14 @@ class _EntryPageState extends State<EntryPage> {
       jobId: widget.job.id,
       start: start,
       end: end,
+      steps: _steps,
       comment: _comment,
     );
   }
 
   Future<void> _setEntryAndDismiss() async {
     try {
+      _steps.add("${DateTime.now().toString()},RED");
       final database = context.read<FirestoreDatabase>(databaseProvider);
       final entry = _entryFromState();
       await database.setEntry(entry);
@@ -92,7 +100,7 @@ class _EntryPageState extends State<EntryPage> {
         actions: <Widget>[
           FlatButton(
             child: Text(
-              widget.entry != null ? 'Update' : 'Create',
+              widget.entry != null ? 'Update' : 'Finish Mapping',
               style: const TextStyle(fontSize: 18.0, color: Colors.white),
             ),
             onPressed: () => _setEntryAndDismiss(),
@@ -106,10 +114,13 @@ class _EntryPageState extends State<EntryPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _buildStartDate(),
-              _buildEndDate(),
+              _buildActiveColor(),
               const SizedBox(height: 8.0),
-              _buildDuration(),
+              _buildRedButton(),
+              const SizedBox(height: 8.0),
+              _buildYellowButton(),
+              const SizedBox(height: 8.0),
+              _buildGreenButton(),
               const SizedBox(height: 8.0),
               _buildComment(),
             ],
@@ -119,39 +130,54 @@ class _EntryPageState extends State<EntryPage> {
     );
   }
 
-  Widget _buildStartDate() {
-    return DateTimePicker(
-      labelText: 'Start',
-      selectedDate: _startDate,
-      selectedTime: _startTime,
-      onSelectedDate: (date) => setState(() => _startDate = date),
-      onSelectedTime: (time) => setState(() => _startTime = time),
+  Widget _buildActiveColor() {
+    return AnimatedContainer(
+      duration: new Duration(milliseconds: 200),
+      width: double.infinity,
+      height: 300,
+      color: _color,
     );
   }
 
-  Widget _buildEndDate() {
-    return DateTimePicker(
-      labelText: 'End',
-      selectedDate: _endDate,
-      selectedTime: _endTime,
-      onSelectedDate: (date) => setState(() => _endDate = date),
-      onSelectedTime: (time) => setState(() => _endTime = time),
+  Widget _buildRedButton() {
+    return Container(
+      width: double.infinity,
+      height: 54,
+      child: ElevatedButton(
+        child: Text('Red'),
+        onPressed: () => setState(() {
+          _color = Colors.red;
+          _steps.add("${DateTime.now().toString()},RED");
+        }),
+      ),
     );
   }
 
-  Widget _buildDuration() {
-    final currentEntry = _entryFromState();
-    final durationFormatted = Format.hours(currentEntry.durationInHours);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        Text(
-          'Duration: $durationFormatted',
-          style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
+  Widget _buildYellowButton() {
+    return Container(
+      width: double.infinity,
+      height: 54,
+      child: ElevatedButton(
+        child: Text('Yellow'),
+        onPressed: () => setState(() {
+          _color = Colors.yellow;
+          _steps.add("${DateTime.now().toString()},YELLOW");
+        }),
+      ),
+    );
+  }
+
+  Widget _buildGreenButton() {
+    return Container(
+      width: double.infinity,
+      height: 54,
+      child: ElevatedButton(
+        child: Text('Green'),
+        onPressed: () => setState(() {
+          _color = Colors.green;
+          _steps.add("${DateTime.now().toString()},GREEN");
+        }),
+      ),
     );
   }
 
