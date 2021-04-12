@@ -2,3 +2,8 @@
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 web/firebase-config.js
+
+.dart_tool
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
