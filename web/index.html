@@ -29,19 +29,26 @@
     }
   </script>
   <!-- The core Firebase JS SDK is always required and must be listed first -->
-  <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
 
   <!-- TODO: Add SDKs for Firebase products that you want to use
       https://firebase.google.com/docs/web/setup#available-libraries -->
-  <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-analytics.js"></script>
-  <script src="./firebase-config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-analytics.js"></script>
 
   <!-- https://stackoverflow.com/questions/950087/how-do-i-include-a-javascript-file-in-another-javascript-file -->
-  <script type="module">
+  <script>
     // Your web app's Firebase configuration
-    import { firebaseConfig } from './firebase-config.js';
+    var firebaseConfig = {
+        apiKey: "AIzaSyCJ0DlSM0KWMkgjv5-b39bjIAw4HHo1uuo",
+        authDomain: "mcttracking-214a2.firebaseapp.com",
+        projectId: "mcttracking-214a2",
+        storageBucket: "mcttracking-214a2.appspot.com",
+        messagingSenderId: "99256369341",
+        appId: "1:99256369341:web:00b938d4bd3d7bc2d6b7d4",
+        measurementId: "G-BP4VS5KX25"
+    };
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     firebase.analytics();

@@ -149,21 +149,21 @@ packages:
       name: cloud_firestore
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.5"
   cloud_firestore_platform_interface:
     dependency: transitive
     description:
       name: cloud_firestore_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.0"
+    version: "4.0.1"
   cloud_firestore_web:
     dependency: transitive
     description:
       name: cloud_firestore_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.5"
   code_builder:
     dependency: transitive
     description:
@@ -226,9 +226,9 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/email_password_sign_in_ui"
-      ref: HEAD
-      resolved-ref: "19bfffa5b7a27e9224ba69acca3f959984b1f590"
-      url: "https://github.com/bizz84/codewithandrea_flutter_packages"
+      ref: "d0cd/disable-registration"
+      resolved-ref: fee36db5f62039362a5d676eff35cf71e42666c1
+      url: "https://github.com/d0cd/codewithandrea_flutter_packages"
     source: git
     version: "0.3.0"
   equatable:
@@ -265,28 +265,28 @@ packages:
       name: firebase_auth
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "1.1.0"
   firebase_auth_platform_interface:
     dependency: transitive
     description:
       name: firebase_auth_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.0"
+    version: "4.1.0"
   firebase_auth_web:
     dependency: transitive
     description:
       name: firebase_auth_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.2"
+    version: "1.0.6"
   firebase_core:
     dependency: "direct main"
     description:
       name: firebase_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.3"
   firebase_core_platform_interface:
     dependency: transitive
     description:
@@ -300,7 +300,7 @@ packages:
       name: firebase_core_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.2"
   firestore_service:
     dependency: "direct main"
     description:

@@ -29,17 +29,18 @@ dependencies:
       path: packages/custom_buttons
   email_password_sign_in_ui:
     git:
-      url: https://github.com/bizz84/codewithandrea_flutter_packages
+      url: https://github.com/d0cd/codewithandrea_flutter_packages
+      ref: d0cd/disable-registration
       path: packages/email_password_sign_in_ui
   firestore_service:
     git:
       url: https://github.com/bizz84/codewithandrea_flutter_packages
       path: packages/firestore_service
-  cloud_firestore: ^1.0.0
+  cloud_firestore: ^1.0.5
   cupertino_icons: ^1.0.2
   equatable: ^2.0.0
-  firebase_auth: ^1.0.0
-  firebase_core: ^1.0.0
+  firebase_auth: ^1.1.0
+  firebase_core: ^1.0.3
   flutter_riverpod: ^0.13.0
   flutter_svg: ^0.21.0-nullsafety.0
   intl: ^0.17.0
@@ -69,7 +70,7 @@ flutter:
   uses-material-design: true
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/time-tracking.svg
+    - assets/pathify-logo.svg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

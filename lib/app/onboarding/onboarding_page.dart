@@ -26,8 +26,8 @@ class OnboardingPage extends StatelessWidget {
             ),
             FractionallySizedBox(
               widthFactor: 0.5,
-              child: SvgPicture.asset('assets/time-tracking.svg',
-                  semanticsLabel: 'Time tracking logo'),
+              child: SvgPicture.asset('assets/pathify-logo.svg',
+                  semanticsLabel: 'Pathify logo'),
             ),
             CustomRaisedButton(
               onPressed: () => onGetStarted(context),
