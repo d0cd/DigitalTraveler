@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:DigitalTraveler/constants/keys.dart';
 import 'package:DigitalTraveler/constants/strings.dart';
 
-enum TabItem { jobs, entries, account }
+enum TabItem { jobs, account }
 
 class TabItemData {
   const TabItemData(
