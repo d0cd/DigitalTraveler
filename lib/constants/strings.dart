@@ -21,10 +21,10 @@ class Strings {
   static const String homePage = 'Home Page';
 
   // Jobs page
-  static const String jobs = 'Jobs';
+  static const String mct = 'MCT Maps';
 
   // Entries page
-  static const String entries = 'Entries';
+  static const String traveler = 'Travelers';
 
   // Account page
   static const String account = 'Account';

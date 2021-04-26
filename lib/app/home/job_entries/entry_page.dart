@@ -1,3 +1,4 @@
+import 'package:DigitalTraveler/app/home/models/mct_step.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,11 +12,12 @@ import 'package:alert_dialogs/alert_dialogs.dart';
 import 'package:DigitalTraveler/routing/app_router.dart';
 import 'package:DigitalTraveler/services/firestore_database.dart';
 import 'package:pedantic/pedantic.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class EntryPage extends StatefulWidget {
-  const EntryPage({required this.job, this.entry});
+  const EntryPage({required this.job, required this.entry});
   final Job job;
-  final Entry? entry;
+  final Entry entry;
 
   static Future<void> show(
       {required BuildContext context, required Job job, Entry? entry}) async {
@@ -33,62 +35,32 @@ class EntryPage extends StatefulWidget {
 }
 
 class _EntryPageState extends State<EntryPage> {
+  late String _name;
   late DateTime _startDate;
   late TimeOfDay _startTime;
   late DateTime _endDate;
   late TimeOfDay _endTime;
-  late List<String> _steps;
+  late List<MCTStep> _steps;
   late String _comment;
   late Color _color;
 
   @override
   void initState() {
     super.initState();
-    final start = widget.entry?.start ?? DateTime.now();
+    _name = widget.entry.name;
+    final start = widget.entry.start;
     _startDate = DateTime(start.year, start.month, start.day);
     _startTime = TimeOfDay.fromDateTime(start);
 
-    final end = widget.entry?.end ?? DateTime.now();
+    final end = widget.entry.end;
     _endDate = DateTime(end.year, end.month, end.day);
     _endTime = TimeOfDay.fromDateTime(end);
 
-    _steps = widget.entry?.steps ?? ["${start.toString()},RED"];
+    _steps = widget.entry.steps;
 
-    _comment = widget.entry?.comment ?? '';
+    _comment = widget.entry.comment;
 
     _color = Colors.red;
-  }
-
-  Entry _entryFromState() {
-    final start = DateTime(_startDate.year, _startDate.month, _startDate.day,
-        _startTime.hour, _startTime.minute);
-    final end = DateTime(_endDate.year, _endDate.month, _endDate.day,
-        _endTime.hour, _endTime.minute);
-    final id = widget.entry?.id ?? documentIdFromCurrentDate();
-    return Entry(
-      id: id,
-      jobId: widget.job.id,
-      start: start,
-      end: end,
-      steps: _steps,
-      comment: _comment,
-    );
-  }
-
-  Future<void> _setEntryAndDismiss() async {
-    try {
-      _steps.add("${DateTime.now().toString()},RED");
-      final database = context.read<FirestoreDatabase>(databaseProvider);
-      final entry = _entryFromState();
-      await database.setEntry(entry);
-      Navigator.of(context).pop();
-    } catch (e) {
-      unawaited(showExceptionAlertDialog(
-        context: context,
-        title: 'Operation failed',
-        exception: e,
-      ));
-    }
   }
 
   @override
@@ -99,12 +71,11 @@ class _EntryPageState extends State<EntryPage> {
         title: Text(widget.job.name),
         actions: <Widget>[
           FlatButton(
-            child: Text(
-              widget.entry != null ? 'Update' : 'Finish Mapping',
-              style: const TextStyle(fontSize: 18.0, color: Colors.white),
-            ),
-            onPressed: () => _setEntryAndDismiss(),
-          ),
+              child: Text(
+                'Return',
+                style: const TextStyle(fontSize: 18.0, color: Colors.white),
+              ),
+              onPressed: () => Navigator.of(context).pop()),
         ],
       ),
       body: SingleChildScrollView(
@@ -112,17 +83,17 @@ class _EntryPageState extends State<EntryPage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              _buildActiveColor(),
               const SizedBox(height: 8.0),
-              _buildRedButton(),
+              Text(
+                _name,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8.0),
-              _buildYellowButton(),
-              const SizedBox(height: 8.0),
-              _buildGreenButton(),
-              const SizedBox(height: 8.0),
-              _buildComment(),
+              _buildStaticEntry(),
             ],
           ),
         ),
@@ -130,70 +101,126 @@ class _EntryPageState extends State<EntryPage> {
     );
   }
 
-  Widget _buildActiveColor() {
-    return AnimatedContainer(
-      duration: new Duration(milliseconds: 200),
-      width: double.infinity,
-      height: 300,
-      color: _color,
-    );
-  }
+  Widget _buildStaticEntry() {
+    final columns = ['Description', 'Timestamp', 'Color'];
 
-  Widget _buildRedButton() {
     return Container(
-      width: double.infinity,
-      height: 54,
-      child: ElevatedButton(
-        child: Text('Red'),
-        onPressed: () => setState(() {
-          _color = Colors.red;
-          _steps.add("${DateTime.now().toString()},RED");
-        }),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          const SizedBox(height: 8.0),
+          DataTable(columns: getColumns(columns), rows: getRows(_steps)),
+          const SizedBox(height: 8.0),
+          _buildChart(),
+        ],
       ),
     );
   }
 
-  Widget _buildYellowButton() {
-    return Container(
-      width: double.infinity,
-      height: 54,
-      child: ElevatedButton(
-        child: Text('Yellow'),
-        onPressed: () => setState(() {
-          _color = Colors.yellow;
-          _steps.add("${DateTime.now().toString()},YELLOW");
-        }),
-      ),
-    );
+  List<DataColumn> getColumns(List<String> columns) {
+    return columns.map((String column) {
+      final isColor = column == columns[2];
+
+      return DataColumn(
+        label: Text(column),
+        numeric: isColor,
+      );
+    }).toList();
   }
 
-  Widget _buildGreenButton() {
-    return Container(
-      width: double.infinity,
-      height: 54,
-      child: ElevatedButton(
-        child: Text('Green'),
-        onPressed: () => setState(() {
-          _color = Colors.green;
-          _steps.add("${DateTime.now().toString()},GREEN");
-        }),
-      ),
-    );
-  }
+  static List<T> modelBuilder<M, T>(
+          List<M> models, T Function(int index, M model) builder) =>
+      models
+          .asMap()
+          .map<int, T>((index, model) => MapEntry(index, builder(index, model)))
+          .values
+          .toList();
 
-  Widget _buildComment() {
-    return TextField(
-      keyboardType: TextInputType.text,
-      maxLength: 50,
-      controller: TextEditingController(text: _comment),
-      decoration: const InputDecoration(
-        labelText: 'Comment',
-        labelStyle: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+  List<DataRow> getRows(List<MCTStep> steps) => steps.map((MCTStep step) {
+        final cells = [step.description, step.timestamp, step.color];
+        return DataRow(
+          cells: modelBuilder(cells, (index, cell) {
+            return DataCell(Text('$cell'));
+          }),
+        );
+      }).toList();
+
+  Widget _buildChart() {
+    int beginning = _steps[0].timestamp.millisecondsSinceEpoch;
+    List<RangeColumnSeries> series = [];
+    int i = 0;
+    while (i < _steps.length - 2) {
+      late Color color;
+      if (_steps[i].color == MCTColor.green) {
+        color = Colors.green;
+      } else if (_steps[i].color == MCTColor.yellow) {
+        color = Colors.yellow;
+      } else {
+        color = Colors.red;
+      }
+      final ser = RangeColumnSeries<MCTStep, num>(
+        dataSource: [_steps[i]],
+        xValueMapper: (MCTStep step, _) =>
+            //j_steps[i + 1].timestamp.millisecondsSinceEpoch -
+            //_steps[i].timestamp.millisecondsSinceEpoch,
+            0,
+        highValueMapper: (MCTStep step, _) =>
+            _steps[i + 1].timestamp.millisecondsSinceEpoch,
+        lowValueMapper: (MCTStep step, _) =>
+            _steps[i].timestamp.millisecondsSinceEpoch,
+        color: color,
+      );
+      i += 1;
+      series.add(ser);
+    }
+    late Color color;
+    if (_steps[_steps.length - 1].color == MCTColor.green) {
+      color = Colors.green;
+    } else if (_steps[_steps.length - 1].color == MCTColor.yellow) {
+      color = Colors.yellow;
+    } else {
+      color = Colors.red;
+    }
+
+    series.add(RangeColumnSeries<MCTStep, num>(
+      dataSource: [_steps[_steps.length - 1]],
+      xValueMapper: (MCTStep step, _) => 0,
+      highValueMapper: (MCTStep step, _) =>
+          _steps[_steps.length - 1].timestamp.millisecondsSinceEpoch,
+      lowValueMapper: (MCTStep step, _) =>
+          _steps[_steps.length - 2].timestamp.millisecondsSinceEpoch,
+      color: color,
+    ));
+    return Center(
+        child: Container(
+      child: SfCartesianChart(
+        title: ChartTitle(
+            text: 'Manufacturing Critical Path Analysis',
+            // Aligns the chart title to left
+            alignment: ChartAlignment.center,
+            textStyle: TextStyle(
+              color: Colors.red,
+              fontFamily: 'Roboto',
+              fontStyle: FontStyle.italic,
+              fontSize: 18,
+            )),
+        isTransposed: false,
+        primaryXAxis: NumericAxis(
+            isVisible: false,
+            title: AxisTitle(
+                text: 'Elapsed Time',
+                textStyle: TextStyle(
+                    color: Colors.deepOrange,
+                    fontFamily: 'Roboto',
+                    fontSize: 16,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300))),
+        primaryYAxis: NumericAxis(isVisible: false),
+        series: series,
+        annotations: [],
       ),
-      keyboardAppearance: Brightness.light,
-      style: const TextStyle(fontSize: 20.0, color: Colors.black),
-      maxLines: null,
-      onChanged: (comment) => _comment = comment,
-    );
+    ));
   }
 }

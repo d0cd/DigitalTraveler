@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:DigitalTraveler/app/landing/responsive.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'menu_item.dart';
 
@@ -34,7 +35,15 @@ class Header extends StatelessWidget {
                 ),
                 NavItem(
                   title: 'Learn More',
-                  tapEvent: () {},
+                  tapEvent: () async {
+                    const url =
+                        'https://drive.google.com/file/d/1ONMzh4vIeaX6b73udy1lwHE5En8aWRXE/view?usp=sharing';
+                    if (await canLaunch(url)) {
+                      await launch(url, forceWebView: true);
+                    } else {
+                      throw 'Could not launch $url';
+                    }
+                  },
                 ),
                 NavItem(
                   title: 'About Us',

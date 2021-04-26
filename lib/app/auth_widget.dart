@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:DigitalTraveler/app/home/jobs/empty_content.dart';
+import 'package:DigitalTraveler/app/home/mct_maps/empty_content.dart';
 import 'package:DigitalTraveler/app/top_level_providers.dart';
 
 class AuthWidget extends ConsumerWidget {

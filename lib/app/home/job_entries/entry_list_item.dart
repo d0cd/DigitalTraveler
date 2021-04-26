@@ -33,6 +33,7 @@ class EntryListItem extends StatelessWidget {
   }
 
   Widget _buildContents(BuildContext context) {
+    final String name = entry.name;
     final dayOfWeek = Format.dayOfWeek(entry.start);
     final startDate = Format.date(entry.start);
     final startTime = TimeOfDay.fromDateTime(entry.start).format(context);
@@ -42,6 +43,11 @@ class EntryListItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        Row(children: <Widget>[
+          Text(name,
+              style: const TextStyle(fontSize: 18.0, color: Colors.grey)),
+          const SizedBox(width: 15.0),
+        ]),
         Row(children: <Widget>[
           Text(dayOfWeek,
               style: const TextStyle(fontSize: 18.0, color: Colors.grey)),

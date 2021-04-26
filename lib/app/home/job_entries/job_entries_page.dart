@@ -6,13 +6,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:DigitalTraveler/app/home/job_entries/entry_list_item.dart';
 import 'package:DigitalTraveler/app/home/job_entries/entry_page.dart';
-import 'package:DigitalTraveler/app/home/jobs/edit_job_page.dart';
-import 'package:DigitalTraveler/app/home/jobs/list_items_builder.dart';
+import 'package:DigitalTraveler/app/home/job_entries/new_entry_page.dart';
+import 'package:DigitalTraveler/app/home/mct_maps/edit_job_page.dart';
+import 'package:DigitalTraveler/app/home/mct_maps/list_items_builder.dart';
 import 'package:DigitalTraveler/app/home/models/entry.dart';
 import 'package:DigitalTraveler/app/home/models/job.dart';
 import 'package:alert_dialogs/alert_dialogs.dart';
 import 'package:DigitalTraveler/app/top_level_providers.dart';
-import 'package:DigitalTraveler/routing/cupertino_tab_view_router.dart';
+import 'package:DigitalTraveler/routing/app_router.dart';
 import 'package:pedantic/pedantic.dart';
 
 class JobEntriesPage extends StatelessWidget {
@@ -21,7 +22,7 @@ class JobEntriesPage extends StatelessWidget {
 
   static Future<void> show(BuildContext context, Job job) async {
     await Navigator.of(context).pushNamed(
-      CupertinoTabViewRoutes.jobEntriesPage,
+      AppRoutes.jobEntriesPage,
       arguments: job,
     );
   }
@@ -43,7 +44,7 @@ class JobEntriesPage extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.add, color: Colors.white),
-            onPressed: () => EntryPage.show(
+            onPressed: () => NewEntryPage.show(
               context: context,
               job: job,
             ),

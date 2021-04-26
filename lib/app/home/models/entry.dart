@@ -1,8 +1,10 @@
 import 'package:equatable/equatable.dart';
+import 'package:DigitalTraveler/app/home/models/mct_step.dart';
 
 class Entry extends Equatable {
   const Entry({
     required this.id,
+    required this.name,
     required this.jobId,
     required this.start,
     required this.end,
@@ -11,10 +13,11 @@ class Entry extends Equatable {
   });
 
   final String id;
+  final String name;
   final String jobId;
   final DateTime start;
   final DateTime end;
-  final List<String> steps;
+  final List<MCTStep> steps;
   final String comment;
 
   @override
@@ -32,12 +35,16 @@ class Entry extends Equatable {
     }
     final startMilliseconds = value['start'] as int;
     final endMilliseconds = value['end'] as int;
+    final List<MCTStep> steps = (value['steps'] as List<dynamic>)
+        .map((dynamic step) => MCTStep.fromMap(step) as MCTStep)
+        .toList();
     return Entry(
       id: id,
+      name: value['name'],
       jobId: value['jobId'],
       start: DateTime.fromMillisecondsSinceEpoch(startMilliseconds),
       end: DateTime.fromMillisecondsSinceEpoch(endMilliseconds),
-      steps: value['steps'].cast<String>(),
+      steps: steps,
       comment: value['comment'] ?? '',
     );
   }
@@ -45,9 +52,10 @@ class Entry extends Equatable {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'jobId': jobId,
+      'name': name,
       'start': start.millisecondsSinceEpoch,
       'end': end.millisecondsSinceEpoch,
-      'steps': steps,
+      'steps': steps.map((step) => step.toMap()).toList(),
       'comment': comment,
     };
   }
