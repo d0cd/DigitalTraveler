@@ -1,17 +1,10 @@
 import 'package:DigitalTraveler/app/home/models/mct_step.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:DigitalTraveler/app/top_level_providers.dart';
-import 'package:DigitalTraveler/common_widgets/date_time_picker.dart';
-import 'package:DigitalTraveler/app/home/job_entries/format.dart';
 import 'package:DigitalTraveler/app/home/models/entry.dart';
+import 'package:DigitalTraveler/app/home/job_entries/chart_data.dart';
 import 'package:DigitalTraveler/app/home/models/job.dart';
-import 'package:alert_dialogs/alert_dialogs.dart';
 import 'package:DigitalTraveler/routing/app_router.dart';
-import 'package:DigitalTraveler/services/firestore_database.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class EntryPage extends StatefulWidget {
@@ -72,6 +65,12 @@ class _EntryPageState extends State<EntryPage> {
         actions: <Widget>[
           FlatButton(
               child: Text(
+                'Publish',
+                style: const TextStyle(fontSize: 18.0, color: Colors.white),
+              ),
+              onPressed: () {}),
+          FlatButton(
+              child: Text(
                 'Return',
                 style: const TextStyle(fontSize: 18.0, color: Colors.white),
               ),
@@ -113,7 +112,9 @@ class _EntryPageState extends State<EntryPage> {
           const SizedBox(height: 8.0),
           DataTable(columns: getColumns(columns), rows: getRows(_steps)),
           const SizedBox(height: 8.0),
-          _buildChart(),
+          _buildBarChart(),
+          const SizedBox(height: 8.0),
+          _buildPieChart(),
         ],
       ),
     );
@@ -147,11 +148,12 @@ class _EntryPageState extends State<EntryPage> {
         );
       }).toList();
 
-  Widget _buildChart() {
-    int beginning = _steps[0].timestamp.millisecondsSinceEpoch;
-    List<RangeColumnSeries> series = [];
+  Widget _buildBarChart() {
+    DateTime beginning = _steps[0].timestamp;
+    DateTime end = _steps[_steps.length - 1].timestamp;
+    List<PlotBand> bands = [];
     int i = 0;
-    while (i < _steps.length - 2) {
+    while (i < _steps.length - 1) {
       late Color color;
       if (_steps[i].color == MCTColor.green) {
         color = Colors.green;
@@ -160,39 +162,24 @@ class _EntryPageState extends State<EntryPage> {
       } else {
         color = Colors.red;
       }
-      final ser = RangeColumnSeries<MCTStep, num>(
-        dataSource: [_steps[i]],
-        xValueMapper: (MCTStep step, _) =>
-            //j_steps[i + 1].timestamp.millisecondsSinceEpoch -
-            //_steps[i].timestamp.millisecondsSinceEpoch,
-            0,
-        highValueMapper: (MCTStep step, _) =>
-            _steps[i + 1].timestamp.millisecondsSinceEpoch,
-        lowValueMapper: (MCTStep step, _) =>
-            _steps[i].timestamp.millisecondsSinceEpoch,
+
+      DateTime high = _steps[i + 1].timestamp;
+      DateTime low = _steps[i].timestamp;
+
+      final band = PlotBand(
+        isVisible: true,
+        shouldRenderAboveSeries: true,
+        sizeType: DateTimeIntervalType.seconds,
+        borderColor: Colors.blue,
+        borderWidth: 2,
         color: color,
+        start: low,
+        end: high,
       );
+      bands.add(band);
       i += 1;
-      series.add(ser);
-    }
-    late Color color;
-    if (_steps[_steps.length - 1].color == MCTColor.green) {
-      color = Colors.green;
-    } else if (_steps[_steps.length - 1].color == MCTColor.yellow) {
-      color = Colors.yellow;
-    } else {
-      color = Colors.red;
     }
 
-    series.add(RangeColumnSeries<MCTStep, num>(
-      dataSource: [_steps[_steps.length - 1]],
-      xValueMapper: (MCTStep step, _) => 0,
-      highValueMapper: (MCTStep step, _) =>
-          _steps[_steps.length - 1].timestamp.millisecondsSinceEpoch,
-      lowValueMapper: (MCTStep step, _) =>
-          _steps[_steps.length - 2].timestamp.millisecondsSinceEpoch,
-      color: color,
-    ));
     return Center(
         child: Container(
       child: SfCartesianChart(
@@ -206,9 +193,11 @@ class _EntryPageState extends State<EntryPage> {
               fontStyle: FontStyle.italic,
               fontSize: 18,
             )),
-        isTransposed: false,
-        primaryXAxis: NumericAxis(
-            isVisible: false,
+        primaryXAxis: DateTimeAxis(
+            isVisible: true,
+            plotBands: bands,
+            minimum: beginning,
+            maximum: end,
             title: AxisTitle(
                 text: 'Elapsed Time',
                 textStyle: TextStyle(
@@ -218,9 +207,50 @@ class _EntryPageState extends State<EntryPage> {
                     fontStyle: FontStyle.italic,
                     fontWeight: FontWeight.w300))),
         primaryYAxis: NumericAxis(isVisible: false),
-        series: series,
         annotations: [],
       ),
     ));
+  }
+
+  Widget _buildPieChart() {
+    double green = 0;
+    double red = 0;
+    double yellow = 0;
+
+    int i = 0;
+    while (i < _steps.length - 1) {
+      int elapsed = _steps[i + 1].timestamp.millisecondsSinceEpoch -
+          _steps[i].timestamp.millisecondsSinceEpoch;
+      if (_steps[i].color == MCTColor.green) {
+        green += elapsed;
+      } else if (_steps[i].color == MCTColor.yellow) {
+        yellow += elapsed;
+      } else {
+        red += elapsed;
+      }
+      i += 1;
+    }
+
+    final List<ChartData> chartData = [
+      ChartData('Value Added Time', green, Colors.green),
+      ChartData('Necessary Non-Value Added Time', yellow, Colors.yellow),
+      ChartData('Non-Value Added Time', red, Colors.red),
+    ];
+    return Center(
+        child: Container(
+            child: SfCircularChart(
+      series: <CircularSeries>[
+        // Render pie chart
+        PieSeries<ChartData, String>(
+            dataSource: chartData,
+            pointColorMapper: (ChartData data, _) => data.color,
+            xValueMapper: (ChartData data, _) => data.x,
+            yValueMapper: (ChartData data, _) => data.y,
+            explode: true,
+            // First segment will be exploded on initial rendering
+            explodeIndex: 1)
+      ],
+      legend: Legend(isVisible: true, position: LegendPosition.auto),
+    )));
   }
 }

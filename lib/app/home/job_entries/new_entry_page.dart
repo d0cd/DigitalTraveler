@@ -126,7 +126,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                   style: const TextStyle(fontSize: 18.0, color: Colors.white),
                 ),
                 onPressed: () {
-                  if (_name != null) {
+                  if (_name != null && _color == Colors.red) {
                     _setEntryAndDismiss();
                   }
                 }),
@@ -251,6 +251,16 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                 ?.didChange(null);
                           }),
                     ),
+                    validator: (value) {
+                      if (value != null) {
+                        return "Timestamp cannot be null";
+                      } else if (!value!
+                          .isAfter(_steps[_steps.length - 1].timestamp)) {
+                        return "Timestamp must be after the previously submitted one";
+                      } else {
+                        return null;
+                      }
+                    },
                   ),
                   FormBuilderDropdown<String>(
                     // autovalidate: true,
